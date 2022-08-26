@@ -39,6 +39,9 @@ BACKUPDIRVAR=hostname-matomo-backup
 ## SET MATOMO DIR
 MATOMODIR=/var/matomo
 
+#BACKUPDIRUSER
+BACKUPDIRUSER=dropbox-user
+
 ##############################################################################################################################
 ##                              DO NOT EDIT FROM HERE - EXCEPT IF YOU KNOW WHAT YOU ARE DOING                               ##
 
@@ -101,6 +104,9 @@ else
     ## MOVE TAR TO LOCALDEST
     mv -v $BACKUPROOT/$BACKUPDIR.tar.gz $LOCALDEST | tee -a $BACKUPROOT/matomo-backup.log
 
+    ## CHOWN DEST DIR
+    chown -fR $BACKUPDIRUSER:$BACKUPDIRUSER $LOCALDEST
+    
     ## START IF ROTATEBACKUP REMOVE OLD
     if $ROTATEBACKUP
     then
