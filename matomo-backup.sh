@@ -58,26 +58,26 @@ fi
 mkdir -p $BACKUPROOT
 
 ## CREATE BACKUPDIR
-mkdir -p $BACKUPROOT/$BACKUPDIRVAR
+mkdir -p $BACKUPROOT/$BACKUPDIR
 
 ## CHANGE TO DIR
 cd $BACKUPROOT
 
 ## TAR MATOMO DIR
-tar cfz $BACKUPROOT/$BACKUPDIRVAR/matomo_dir.tar.gz $MATOMODIR
+tar cfz $BACKUPROOT/$BACKUPDIR/matomo_dir.tar.gz $MATOMODIR
 
 ## RUN MATOMO DATABSE BACKUP
-$MATOMODIR/console database:backup --backup-path=$BACKUPROOT/$BACKUPDIRVAR --timeout=6000
+$MATOMODIR/console database:backup --backup-path=$BACKUPROOT/$BACKUPDIR --timeout=6000
 
 ## TAR THE WHOLE BACKUP DIR AND REMOVE DIR IF SUCCESSFUL
-tar cfz $BACKUPROOT/$BACKUPDIR.tar.gz $BACKUPROOT/$BACKUPDIRVAR && rm -R $BACKUPROOT/$BACKUPDIRVAR
+tar cfz $BACKUPROOT/$BACKUPDIR.tar.gz $BACKUPROOT/$BACKUPDIR && rm -R $BACKUPROOT/$BACKUPDIR
 
 ## START IF REMOTEBACKUP ELSE LOCALBACKUP
 if $REMOTEBACKUP;
 then
 ## SEND TAR TO REMOTE SERVER
 sftp $REMOTESERVER <<_EOF_
-    put $BACKUPROOT/$BACKUPDIRVAR.tar.gz $REMOTEDEST/$BACKUPDIRVAR.tar.gz
+    put $BACKUPROOT/$BACKUPDIR.tar.gz $REMOTEDEST/$BACKUPDIR.tar.gz
     bye
 _EOF_
 
@@ -85,26 +85,26 @@ _EOF_
     if $ROTATEBACKUP
     then
 ssh -T $REMOTESERVER <<_EOF_
-    find $REMOTEDEST/$BACKUPDIRVAR-* -mtime +$KEEPDAYS -exec rm -v {} \; | tee -a $REMOTEDEST/matomo-backup.log
+    find $REMOTEDEST/$BACKUPDIR-* -mtime +$KEEPDAYS -exec rm -v {} \; | tee -a $REMOTEDEST/matomo-backup.log
     exit
 _EOF_
     fi
     ## END IF ROTATEBACKUP REMOVE OLD
 
     ## REMOVE LOCAL TAR
-    rm -v $BACKUPROOT/$BACKUPDIRVAR.tar.gz | tee -a $BACKUPROOT/matomo-backup.log
+    rm -v $BACKUPROOT/$BACKUPDIR.tar.gz | tee -a $BACKUPROOT/matomo-backup.log
 else
 
     ## MAKE LOCALDEST
     mkdir -p $LOCALDEST
 
     ## MOVE TAR TO LOCALDEST
-    mv -v $BACKUPROOT/$BACKUPDIRVAR.tar.gz $LOCALDEST | tee -a $BACKUPROOT/matomo-backup.log
+    mv -v $BACKUPROOT/$BACKUPDIR.tar.gz $LOCALDEST | tee -a $BACKUPROOT/matomo-backup.log
 
     ## START IF ROTATEBACKUP REMOVE OLD
     if $ROTATEBACKUP
     then
-        find $LOCALDEST/$BACKUPDIRVAR-* -mtime +$KEEPDAYS -exec rm -v {} \; | tee -a $BACKUPROOT/matomo-backup.log
+        find $LOCALDEST/$BACKUPDIR-* -mtime +$KEEPDAYS -exec rm -v {} \; | tee -a $BACKUPROOT/matomo-backup.log
     fi
     ## END IF ROTATEBACKUP REMOVE OLD
 fi
