@@ -32,7 +32,7 @@ Matomo Github;
 
 3. wget the backup script
 
-``wget https://github.com/dieskim/matomo-backup-script/blob/master/matomo-backup.sh``
+``wget https://raw.githubusercontent.com/dieskim/matomo-backup-script/main/matomo-backup.sh``
 
 4. Set the script to be executable
 
